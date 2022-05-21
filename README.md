@@ -1,3 +1,5 @@
 # Unit-Conversion-API
 
-Unit conversion API using Spring framework and OpenCsv.
+An RESTFul API for unit conversion using Spring framework and OpenCsv.
+
+
