@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(value = { VariableValidationException.class, UnitValidationException.class })
+	@ExceptionHandler(value = { ArgumentNotValidException.class })
 	public ResponseEntity<Object> handleArgumentNotValid(MethodArgumentNotValidException ex, WebRequest request) {
 		ErrorResponse error = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
 		return super.handleExceptionInternal(ex, error, new HttpHeaders(), HttpStatus.NOT_FOUND, request);

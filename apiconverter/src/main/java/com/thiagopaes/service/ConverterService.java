@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.thiagopaes.dto.ConverterDTO;
-import com.thiagopaes.handler.UnitValidationException;
-import com.thiagopaes.handler.VariableValidationException;
+import com.thiagopaes.handler.ArgumentNotValidException;
 import com.thiagopaes.model.Unit;
 
 @Service
@@ -33,9 +32,9 @@ public class ConverterService {
 			String currentDirectory = System.getProperty("user.dir");
 			String path = currentDirectory + "/src/main/resources/units.csv";
 			beans = new CsvToBeanBuilder<Unit>(new FileReader(path)).withType(Unit.class).build().parse();
-			System.out.println("Arquivo csv lido em:" + path);
+			System.out.println("File read at:" + path);
 		} catch (Exception e) {
-			System.out.println("Erro: " + e.getMessage());
+			System.out.println("Error: " + e.getMessage());
 		}
 
 		// @formatter:off
@@ -77,23 +76,23 @@ public class ConverterService {
 		return result;
 	}
 
-	public Optional<Unit> filterUnit(List<Unit> listaUnidades, String unitStr) {
+	public Optional<Unit> filterUnit(List<Unit> units, String unitStr) {
 		// @formatter:off
 		Predicate<Unit> byUnitStr = 
 				unit -> unit.getUnit().equals(unitStr.toLowerCase());
-		Optional<Unit> unidade = listaUnidades
+		Optional<Unit> unidade = units
 						.stream()
 						.filter(byUnitStr)
 						.findFirst();
 		// @formatter:on
 		if (unidade.isEmpty())
-			throw new UnitValidationException("invalid unit: " + unitStr);
+			throw new ArgumentNotValidException("Invalid unit: " + unitStr);
 		return unidade;
 	}
 
 	public List<Unit> filterVariable(String variable) {
 		if (!variableList.contains(variable))
-			throw new VariableValidationException("invalid variable: " + variable);
+			throw new ArgumentNotValidException("Invalid variable: " + variable);
 		// @formatter:off
 		Predicate<Unit> byVariableStr = 
 				unit -> unit.getVariable()

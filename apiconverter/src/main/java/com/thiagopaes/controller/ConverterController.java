@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.thiagopaes.dto.ConverterDTO;
-import com.thiagopaes.handler.UnitValidationException;
-import com.thiagopaes.handler.VariableValidationException;
 import com.thiagopaes.service.ConverterService;
 
 @RestController
@@ -33,9 +31,7 @@ public class ConverterController {
 
 	@GetMapping("/{variable}")
 	public ResponseEntity<List<String>> listUnits(@PathVariable String variable) {
-		if (!converterService.listUnits(variable).isEmpty())
-			return ResponseEntity.ok(converterService.listUnits(variable));
-		throw new VariableValidationException("variable not found.");
+		return ResponseEntity.ok(converterService.listUnits(variable));
 	}
 
 	// TODO: get for ("/{variable}/{unit}")
