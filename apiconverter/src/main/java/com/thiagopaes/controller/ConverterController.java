@@ -8,44 +8,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.thiagopaes.model.Converter;
-import com.thiagopaes.model.RequestModel;
+import com.thiagopaes.dto.ConverterDTO;
+import com.thiagopaes.handler.UnitValidationException;
+import com.thiagopaes.handler.VariableValidationException;
+import com.thiagopaes.service.ConverterService;
 
 @RestController
 
-@RequestMapping("/converterapiv1")
+@RequestMapping("/unitconversionapi/v2")
 public class ConverterController {
 
 	@Autowired
-	private Converter converter;
+	private ConverterService converterService;
 
-	@GetMapping("/example")
-	public RequestModel requestExample() {
-		return new RequestModel("mm", "cm", 100.0);
-	}
-
-	@GetMapping("/list")
+	@GetMapping
 	public List<String> listVariables() {
-		return Converter.getVariables();
+		return ConverterService.getVariableList();
 	}
 
-	@GetMapping("/list/{variable}")
+	@GetMapping("/{variable}")
 	public ResponseEntity<List<String>> listUnits(@PathVariable String variable) {
-		if (!converter.listUnits(variable).isEmpty())
-			return ResponseEntity.ok(converter.listUnits(variable));
-		return ResponseEntity.notFound().build();
+		if (!converterService.listUnits(variable).isEmpty())
+			return ResponseEntity.ok(converterService.listUnits(variable));
+		throw new VariableValidationException("variable not found.");
 	}
 
-	@GetMapping("/convert/{variable}")
-	public ResponseEntity<Double> convert(@Valid @RequestBody RequestModel r, @PathVariable String variable) {
-		Double result = converter.convert(variable, r);
-		if (converter.convert(variable, r) != null)
-			return ResponseEntity.ok(result);
-		return ResponseEntity.notFound().build();
+	// TODO: get for ("/{variable}/{unit}")
+
+	@PostMapping("/{variable}")
+	public ResponseEntity<Double> convert(@Valid @RequestBody ConverterDTO r, @PathVariable String variable) {
+		Double result = converterService.convert(variable, r);
+		return ResponseEntity.ok(result);
 	}
 
 }
