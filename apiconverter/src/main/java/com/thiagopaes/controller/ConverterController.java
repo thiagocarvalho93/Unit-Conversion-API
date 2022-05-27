@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.thiagopaes.dto.ConverterDTO;
+import com.thiagopaes.dto.ConversionRequestDTO;
+import com.thiagopaes.dto.ResultDTO;
 import com.thiagopaes.service.ConverterService;
 
 @RestController
@@ -37,8 +38,8 @@ public class ConverterController {
 	// TODO: get for ("/{variable}/{unit}")
 
 	@PostMapping("/{variable}")
-	public ResponseEntity<Double> convert(@Valid @RequestBody ConverterDTO r, @PathVariable String variable) {
-		Double result = converterService.convert(variable, r);
+	public ResponseEntity<ResultDTO> convert(@Valid @RequestBody ConversionRequestDTO r, @PathVariable String variable) {
+		ResultDTO result = converterService.convert(variable, r);
 		return ResponseEntity.ok(result);
 	}
 

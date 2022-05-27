@@ -12,13 +12,11 @@ public class ErrorResponse {
 
 	}
 
-	public ErrorResponse(Integer status, String titulo, LocalDateTime dataHora) {
+	public ErrorResponse(Integer status, String title, LocalDateTime dateTime) {
 		super();
 		this.status = status;
-		this.title = titulo;
-		this.dateTime = dataHora;
-		// this.errors = erros;
-
+		this.title = title;
+		this.dateTime = dateTime;
 	}
 
 	public Integer getStatus() {
@@ -44,13 +42,5 @@ public class ErrorResponse {
 	public void setDataHora(LocalDateTime dataHora) {
 		this.dateTime = dataHora;
 	}
-
-//	public List<String> getErros() {
-//		return errors;
-//	}
-//
-//	public void setErros(List<String> erros) {
-//		this.errors = erros;
-//	}
 
 }

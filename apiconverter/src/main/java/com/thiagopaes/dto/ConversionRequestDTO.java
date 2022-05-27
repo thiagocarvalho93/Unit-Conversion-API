@@ -4,7 +4,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class ConverterDTO {
+public class ConversionRequestDTO {
 
 	@NotBlank(message = "fromUnit is mandatory.")
 	@Size(max = 4, message = "invalid size for fromUnit.")
@@ -17,7 +17,7 @@ public class ConverterDTO {
 	@NotNull(message = "value is mandatory.")
 	private Double value;
 
-	public ConverterDTO(
+	public ConversionRequestDTO(
 			@NotBlank(message = "fromUnit is mandatory.") @Size(max = 4, message = "invalid size for fromUnit.") String fromUnit,
 			@NotBlank(message = "toUnit is mandatory.") @Size(max = 4, message = "invalid size for toUnit.") String toUnit,
 			@NotNull(message = "value is mandatory.") Double value) {

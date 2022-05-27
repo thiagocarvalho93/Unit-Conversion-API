@@ -10,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.opencsv.bean.CsvToBeanBuilder;
-import com.thiagopaes.dto.ConverterDTO;
+import com.thiagopaes.dto.ConversionRequestDTO;
+import com.thiagopaes.dto.ResultDTO;
 import com.thiagopaes.handler.ArgumentNotValidException;
 import com.thiagopaes.model.Unit;
 
@@ -66,13 +67,14 @@ public class ConverterService {
 		// @formatter:on
 	}
 
-	public Double convert(String variable, ConverterDTO r) {
+	public ResultDTO convert(String variable, ConversionRequestDTO r) {
 		List<Unit> units = filterVariable(variable);
 		unitFrom = filterUnit(units, r.getFromUnit());
 		unitTo = filterUnit(units, r.getToUnit());
 
 		// TODO: verify double value
-		Double result = (unitTo.get().getFactor() / unitFrom.get().getFactor()) * r.getValue();
+		Double resultValue = (unitTo.get().getFactor() / unitFrom.get().getFactor()) * r.getValue();
+		ResultDTO result = new ResultDTO(r.getToUnit(), resultValue);
 		return result;
 	}
 
