@@ -1,6 +1,7 @@
 package com.thiagopaes.service;
 
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -13,8 +14,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.opencsv.bean.CsvToBeanBuilder;
-import com.thiagopaes.dto.ConversionRequestDTO;
-import com.thiagopaes.dto.ResultDTO;
+import com.thiagopaes.dto.GetResponseDTO;
+import com.thiagopaes.dto.PostRequestDTO;
+import com.thiagopaes.dto.PostResponseDTO;
 import com.thiagopaes.handler.ArgumentNotValidException;
 import com.thiagopaes.model.Unit;
 
@@ -22,7 +24,6 @@ import com.thiagopaes.model.Unit;
 public class ConverterService {
 	private List<Unit> beans;
 	private List<String> variableNamesList;
-	private List<String> unitNamesList;
 
 	@Autowired
 	private Optional<Unit> unitFrom;
@@ -35,6 +36,7 @@ public class ConverterService {
 	// runs on program startup
 	@PostConstruct
 	void postConstruct() {
+		// Pass values from csv to a list of beans
 		try {
 			// String currentDirectory = System.getProperty("user.dir");
 			// String path = currentDirectory + "/src/main/resources/units.csv";
@@ -50,34 +52,41 @@ public class ConverterService {
 					.map(e -> e.getVariable())
 					.distinct()
 					.collect(Collectors.toList());		
-		// units list
-		unitNamesList = beans
-				.stream()
-				.map(e -> e.getUnit())
-				.distinct()
-				.collect(Collectors.toList());
 		// @formatter:on
+
 	}
 
-	public List<String> listUnits(String variable) {
+	public GetResponseDTO listUnits(String variable) {
+		if (!variableNamesList.contains(variable))
+			throw new ArgumentNotValidException("Invalid variable: " + variable);
 		Predicate<Unit> byVariable = unit -> unit.getVariable().equals(variable.toLowerCase());
 		// @formatter:off
-		return beans
+		List<String> units = beans
 				.stream()
 				.filter(byVariable)
 				.map(e -> e.getUnit())
 				.collect(Collectors.toList());
 		// @formatter:on
+		return new GetResponseDTO(variable, units);
 	}
 
-	public ResultDTO convert(String variable, ConversionRequestDTO r) {
+	// TODO: get this on program startup
+	public List<GetResponseDTO> listAll() {
+		List<GetResponseDTO> list = new ArrayList<>();
+		for (String variable : variableNamesList) {
+			list.add(listUnits(variable));
+		}
+		return list;
+	}
+
+	public PostResponseDTO convert(String variable, PostRequestDTO r) {
 		List<Unit> units = filterVariable(variable);
 		unitFrom = filterUnit(units, r.getFromUnit());
 		unitTo = filterUnit(units, r.getToUnit());
 
 		// TODO: verify double value
 		Double resultValue = (unitTo.get().getFactor() / unitFrom.get().getFactor()) * r.getValue();
-		ResultDTO result = new ResultDTO(r.getToUnit(), resultValue);
+		PostResponseDTO result = new PostResponseDTO(r.getToUnit(), resultValue);
 		return result;
 	}
 
@@ -124,14 +133,6 @@ public class ConverterService {
 
 	public void setVariableNamesList(List<String> variableNamesList) {
 		this.variableNamesList = variableNamesList;
-	}
-
-	public List<String> getUnitNamesList() {
-		return unitNamesList;
-	}
-
-	public void setUnitNamesList(List<String> unitNamesList) {
-		this.unitNamesList = unitNamesList;
 	}
 
 	public String getFilePath() {

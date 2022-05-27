@@ -1,11 +1,11 @@
 package com.thiagopaes.dto;
 
-public class ResultDTO {
+public class PostResponseDTO {
 
 	private String unit;
 	private Double result;
 
-	public ResultDTO(String unit, Double result) {
+	public PostResponseDTO(String unit, Double result) {
 		super();
 		this.unit = unit;
 		this.result = result;
