@@ -4,6 +4,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class PostRequestDTO {
 
 	@NotBlank(message = "fromUnit is mandatory.")
@@ -27,6 +29,7 @@ public class PostRequestDTO {
 		this.value = value;
 	}
 
+	@JsonProperty("from_unit")
 	public String getFromUnit() {
 		return fromUnit;
 	}
@@ -35,6 +38,7 @@ public class PostRequestDTO {
 		this.fromUnit = fromUnit;
 	}
 
+	@JsonProperty("to_unit")
 	public String getToUnit() {
 		return toUnit;
 	}

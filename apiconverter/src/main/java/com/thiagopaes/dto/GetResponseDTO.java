@@ -2,6 +2,8 @@ package com.thiagopaes.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class GetResponseDTO {
 
 	private String variable;
@@ -13,6 +15,7 @@ public class GetResponseDTO {
 		this.variable = variable;
 	}
 
+	@JsonProperty("unit_list")
 	public List<String> getUnit() {
 		return unitList;
 	}
