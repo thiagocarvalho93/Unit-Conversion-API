@@ -27,7 +27,7 @@ public class ConverterController {
 
 	@GetMapping
 	public List<String> listVariables() {
-		return ConverterService.getVariableList();
+		return converterService.getVariableNamesList();
 	}
 
 	@GetMapping("/{variable}")
@@ -38,7 +38,8 @@ public class ConverterController {
 	// TODO: get for ("/{variable}/{unit}")
 
 	@PostMapping("/{variable}")
-	public ResponseEntity<ResultDTO> convert(@Valid @RequestBody ConversionRequestDTO r, @PathVariable String variable) {
+	public ResponseEntity<ResultDTO> convert(@Valid @RequestBody ConversionRequestDTO r,
+			@PathVariable String variable) {
 		ResultDTO result = converterService.convert(variable, r);
 		return ResponseEntity.ok(result);
 	}
