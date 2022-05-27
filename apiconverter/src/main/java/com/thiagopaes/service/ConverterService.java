@@ -6,7 +6,10 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -17,43 +20,43 @@ import com.thiagopaes.model.Unit;
 
 @Service
 public class ConverterService {
-
-	private static List<Unit> beans;
-	private static List<String> variableList;
-	private static List<String> unitList;
+	private List<Unit> beans;
+	private List<String> variableNamesList;
+	private List<String> unitNamesList;
 
 	@Autowired
 	private Optional<Unit> unitFrom;
 	@Autowired
 	private Optional<Unit> unitTo;
 
-	// runs on program load
-	static {
-		try {
-			String currentDirectory = System.getProperty("user.dir");
-			String path = currentDirectory + "/src/main/resources/units.csv";
-			beans = new CsvToBeanBuilder<Unit>(new FileReader(path)).withType(Unit.class).build().parse();
-			System.out.println("File read at:" + path);
-		} catch (Exception e) {
-			System.out.println("Error: " + e.getMessage());
-		}
+	@Value("${file.path}")
+	private String filePath;
 
+	// runs on program startup
+	@PostConstruct
+	void postConstruct() {
+		try {
+			// String currentDirectory = System.getProperty("user.dir");
+			// String path = currentDirectory + "/src/main/resources/units.csv";
+			beans = new CsvToBeanBuilder<Unit>(new FileReader(filePath)).withType(Unit.class).build().parse();
+			System.out.println("File read succesfully at:" + filePath);
+		} catch (Exception e) {
+			System.out.println("Error reading file: " + e.getMessage());
+		}
 		// @formatter:off
 		// variables list
-		variableList = beans
+		variableNamesList = beans
 					.stream()
 					.map(e -> e.getVariable())
 					.distinct()
-					.collect(Collectors.toList());
-		
+					.collect(Collectors.toList());		
 		// units list
-		unitList = beans
+		unitNamesList = beans
 				.stream()
 				.map(e -> e.getUnit())
 				.distinct()
 				.collect(Collectors.toList());
 		// @formatter:on
-
 	}
 
 	public List<String> listUnits(String variable) {
@@ -93,7 +96,7 @@ public class ConverterService {
 	}
 
 	public List<Unit> filterVariable(String variable) {
-		if (!variableList.contains(variable))
+		if (!variableNamesList.contains(variable))
 			throw new ArgumentNotValidException("Invalid variable: " + variable);
 		// @formatter:off
 		Predicate<Unit> byVariableStr = 
@@ -107,28 +110,36 @@ public class ConverterService {
 		return lista;
 	}
 
-	public static List<Unit> getBeans() {
+	public List<Unit> getBeans() {
 		return beans;
 	}
 
-	public static void setBeans(List<Unit> beans) {
-		ConverterService.beans = beans;
+	public void setBeans(List<Unit> beans) {
+		this.beans = beans;
 	}
 
-	public static List<String> getVariableList() {
-		return variableList;
+	public List<String> getVariableNamesList() {
+		return variableNamesList;
 	}
 
-	public static void setVariableList(List<String> variableList) {
-		ConverterService.variableList = variableList;
+	public void setVariableNamesList(List<String> variableNamesList) {
+		this.variableNamesList = variableNamesList;
 	}
 
-	public static List<String> getUnitList() {
-		return unitList;
+	public List<String> getUnitNamesList() {
+		return unitNamesList;
 	}
 
-	public static void setUnitList(List<String> unitList) {
-		ConverterService.unitList = unitList;
+	public void setUnitNamesList(List<String> unitNamesList) {
+		this.unitNamesList = unitNamesList;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
 	}
 
 	public Optional<Unit> getUnitFrom() {

@@ -20,4 +20,6 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 		return super.handleExceptionInternal(ex, error, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
 
+	// TODO: handle invalid JSON request format
+
 }
