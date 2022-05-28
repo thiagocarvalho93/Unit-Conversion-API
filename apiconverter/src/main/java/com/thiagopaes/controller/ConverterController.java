@@ -38,8 +38,6 @@ public class ConverterController {
 		return ResponseEntity.ok(converterService.listUnits(variable));
 	}
 
-	// TODO: get for ("/{variable}/{unit}")
-
 	@PostMapping("/{variable}")
 	public ResponseEntity<PostResponseDTO> convert(@Valid @RequestBody PostRequestDTO r,
 			@PathVariable String variable) {
