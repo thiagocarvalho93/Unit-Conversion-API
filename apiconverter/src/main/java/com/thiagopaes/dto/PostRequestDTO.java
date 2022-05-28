@@ -19,7 +19,7 @@ public class PostRequestDTO {
 	@Size(max = 4, message = "invalid size for to_unit.")
 	private String toUnit;
 
-	@NotBlank(message = "to_unit is mandatory.")
+	@NotBlank(message = "value is mandatory.")
 	private String value;
 
 	public PostRequestDTO(
