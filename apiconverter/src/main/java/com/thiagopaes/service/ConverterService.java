@@ -1,5 +1,6 @@
 package com.thiagopaes.service;
 
+import java.beans.PropertyChangeEvent;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ import com.thiagopaes.model.Unit;
 public class ConverterService {
 	private List<Unit> beans;
 	private List<String> variableNamesList;
+	private List<GetResponseDTO> responseList;
 
 	@Autowired
 	private Optional<Unit> unitFrom;
@@ -36,7 +39,7 @@ public class ConverterService {
 	// runs on program startup
 	@PostConstruct
 	void postConstruct() {
-		// Pass values from csv to a list of beans
+		// Pass values from csv to a list
 		try {
 			// String currentDirectory = System.getProperty("user.dir");
 			// String path = currentDirectory + "/src/main/resources/units.csv";
@@ -53,7 +56,10 @@ public class ConverterService {
 					.distinct()
 					.collect(Collectors.toList());		
 		// @formatter:on
-
+		responseList = new ArrayList<>();
+		for (String variable : variableNamesList) {
+			responseList.add(listUnits(variable));
+		}
 	}
 
 	public GetResponseDTO listUnits(String variable) {
@@ -70,13 +76,8 @@ public class ConverterService {
 		return new GetResponseDTO(variable, units);
 	}
 
-	// TODO: get this on program startup
 	public List<GetResponseDTO> listAll() {
-		List<GetResponseDTO> list = new ArrayList<>();
-		for (String variable : variableNamesList) {
-			list.add(listUnits(variable));
-		}
-		return list;
+		return responseList;
 	}
 
 	public PostResponseDTO convert(String variable, PostRequestDTO r) {
@@ -84,8 +85,14 @@ public class ConverterService {
 		unitFrom = filterUnit(units, r.getFromUnit());
 		unitTo = filterUnit(units, r.getToUnit());
 
-		// TODO: verify double value
-		Double resultValue = (unitTo.get().getFactor() / unitFrom.get().getFactor()) * r.getValue();
+		Double value;
+		try {
+			value = Double.parseDouble(r.getValue());
+		} catch (Exception e) {
+			PropertyChangeEvent event = new PropertyChangeEvent(r, "value", "double", "string");
+			throw new TypeMismatchException(event, Double.class, e);
+		}
+		Double resultValue = (unitTo.get().getFactor() / unitFrom.get().getFactor()) * value;
 		PostResponseDTO result = new PostResponseDTO(r.getToUnit(), resultValue);
 		return result;
 	}

@@ -2,34 +2,36 @@ package com.thiagopaes.dto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PostRequestDTO {
 
-	@NotBlank(message = "fromUnit is mandatory.")
-	@Size(max = 4, message = "invalid size for fromUnit.")
+	@JsonProperty("from_unit")
+	@NotBlank(message = "from_unit is mandatory.")
+	@Size(max = 4, message = "invalid size for from_unit.")
 	private String fromUnit;
 
-	@NotBlank(message = "toUnit is mandatory.")
-	@Size(max = 4, message = "invalid size for toUnit.")
+	@JsonProperty("to_unit")
+	@NotBlank(message = "to_unit is mandatory.")
+	@Size(max = 4, message = "invalid size for to_unit.")
 	private String toUnit;
 
-	@NotNull(message = "value is mandatory.")
-	private Double value;
+	@NotBlank(message = "to_unit is mandatory.")
+	private String value;
 
 	public PostRequestDTO(
-			@NotBlank(message = "fromUnit is mandatory.") @Size(max = 4, message = "invalid size for fromUnit.") String fromUnit,
-			@NotBlank(message = "toUnit is mandatory.") @Size(max = 4, message = "invalid size for toUnit.") String toUnit,
-			@NotNull(message = "value is mandatory.") Double value) {
+			@NotBlank(message = "from_unit is mandatory.") @Size(max = 4, message = "invalid size for from_unit.") String fromUnit,
+			@NotBlank(message = "to_unit is mandatory.") @Size(max = 4, message = "invalid size for to_unit.") String toUnit,
+			@NotBlank(message = "to_unit is mandatory.") String value) {
 		super();
 		this.fromUnit = fromUnit;
 		this.toUnit = toUnit;
 		this.value = value;
 	}
 
-	@JsonProperty("from_unit")
 	public String getFromUnit() {
 		return fromUnit;
 	}
@@ -38,7 +40,6 @@ public class PostRequestDTO {
 		this.fromUnit = fromUnit;
 	}
 
-	@JsonProperty("to_unit")
 	public String getToUnit() {
 		return toUnit;
 	}
@@ -47,17 +48,17 @@ public class PostRequestDTO {
 		this.toUnit = toUnit;
 	}
 
-	public Double getValue() {
+	public String getValue() {
 		return value;
 	}
 
-	public void setValue(Double value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
 
 	@Override
 	public String toString() {
-		return "RequestModel [fromUnit=" + fromUnit + ", toUnit=" + toUnit + ", value=" + value + "]";
+		return "PostRequestDTO [from_unit=" + fromUnit + ", to_unit=" + toUnit + ", value=" + value + "]";
 	}
 
 }
